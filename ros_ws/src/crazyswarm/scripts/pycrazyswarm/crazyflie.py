@@ -108,7 +108,7 @@ class Crazyflie:
 
         self.cmdVelPublisher = rospy.Publisher(prefix + "/cmd_vel", geometry_msgs.msg.Twist, queue_size=1)
 
-        self.cmdPositionPublisher = rospy.Publisher(prefix + "/cmd_position", Position, queue_size=1)
+        self.cmdPositionPublisher = rospy.Publisher(prefix + "/cmd_position", Position, queue_size=10)
         self.cmdPositionMsg = Position()
         self.cmdPositionMsg.header.seq = 0
         self.cmdPositionMsg.header.frame_id = "/world"
@@ -336,7 +336,7 @@ class Crazyflie:
         """
         self.tf.waitForTransform("/world", "/cf" + str(self.id), rospy.Time(0), rospy.Duration(10))
         position, quaternion = self.tf.lookupTransform("/world", "/cf" + str(self.id), rospy.Time(0))
-        return np.array(position)
+        return np.array(position), np.array(quaternion)
 
     def getParam(self, name):
         """Returns the current value of the onboard named parameter.
@@ -522,6 +522,7 @@ class Crazyflie:
         self.cmdPositionMsg.z   = pos[2]
         self.cmdPositionMsg.yaw = yaw
         self.cmdPositionPublisher.publish(self.cmdPositionMsg)
+        rospy.sleep(0.01)
 
     def setLEDColor(self, r, g, b):
         """Sets the color of the LED ring deck.
@@ -578,7 +579,7 @@ class CrazyflieServer:
         # self.stopService = rospy.ServiceProxy("/stop", Stop)
         rospy.wait_for_service("/go_to")
         self.goToService = rospy.ServiceProxy("/go_to", GoTo)
-        rospy.wait_for_service("/start_trajectory");
+        rospy.wait_for_service("/start_trajectory")
         self.startTrajectoryService = rospy.ServiceProxy("/start_trajectory", StartTrajectory)
         rospy.wait_for_service("/update_params")
         self.updateParamsService = rospy.ServiceProxy("/update_params", UpdateParams)

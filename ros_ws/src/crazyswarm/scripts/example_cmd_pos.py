@@ -12,7 +12,7 @@ while Z < 1.0:
         pos = np.array(cf.initialPosition) + np.array([0, 0, Z])
         cf.cmdPosition(pos)
     timeHelper.sleep(0.1)
-    Z += 0.05
+    Z += 0.2
 
 # land
 while Z > 0.0:

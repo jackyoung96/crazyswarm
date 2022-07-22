@@ -1,0 +1,8 @@
+Defaulting to user installation because normal site-packages is not writeable
+Collecting PyQt5
+  Using cached PyQt5-5.15.6-cp36-abi3-manylinux1_x86_64.whl (8.3 MB)
+Collecting PyQt5-sip<13,>=12.8
+  Using cached PyQt5_sip-12.10.1-cp38-cp38-manylinux1_x86_64.whl (353 kB)
+Requirement already satisfied: PyQt5-Qt5>=5.15.2 in /home/jack/.local/lib/python3.8/site-packages (from PyQt5) (5.15.2)
+Installing collected packages: PyQt5-sip, PyQt5
+Successfully installed PyQt5-5.15.6 PyQt5-sip-12.10.1

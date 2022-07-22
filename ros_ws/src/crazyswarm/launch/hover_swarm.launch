@@ -10,7 +10,27 @@
       # Logging configuration (Use enable_logging to actually enable logging)
       genericLogTopics: ["log1"]
       genericLogTopicFrequencies: [10]
-      genericLogTopic_log1_Variables: ["stateEstimate.x", "ctrltarget.x"]
+      # genericLogTopic_log1_Variables: ["stateEstimate.x", "ctrltarget.z"]
+      # genericLogTopic_log1_Variables: ["acc.x", "acc.y", "acc.z", "gyro.x", "gyro.y", "gyro.z"]
+      # genericLogTopic_log1_Variables: ["stateEstimate.x","stateEstimate.y","stateEstimate.z","stateEstimate.yaw"]
+      # genericLogTopic_log1_Variables: ["kalman.stateX","kalman.stateY","kalman.stateZ","stateEstimate.x","stateEstimate.y","stateEstimate.z"]
+      # genericLogTopic_log1_Variables: ["kalman.stateX","kalman.stateY","kalman.stateZ","kalman.stateD0","kalman.stateD1","kalman.stateD2"]
+      # genericLogTopic_log1_Variables: ["kalman.q1","kalman.q2","kalman.q3", "stateEstimate.qx","stateEstimate.qy","stateEstimate.qz"]
+      # genericLogTopic_log1_Variables: ["motor.m1","motor.m2","motor.m3","motor.m4"]
+      genericLogTopic_log1_Variables: ["ctrlNN.in0","ctrlNN.in1","ctrlNN.in2"]
+      # genericLogTopic_log1_Variables: ["ctrlNN.in3","ctrlNN.in4","ctrlNN.in6","ctrlNN.in7","ctrlNN.in11"]
+      # genericLogTopic_log1_Variables: ["ctrlNN.in3","ctrlNN.in4","ctrlNN.in5","ctrlNN.in6","ctrlNN.in7","ctrlNN.in8","ctrlNN.in9","ctrlNN.in10","ctrlNN.in11"]
+      # genericLogTopic_log1_Variables: ["ctrlNN.in12","ctrlNN.in13","ctrlNN.in14"]
+      # genericLogTopic_log1_Variables: ["ctrlNN.in15","ctrlNN.in16","ctrlNN.in17"]
+      # genericLogTopic_log1_Variables: ["ctrlNN.in3","ctrlNN.in4","ctrlNN.in6","ctrlNN.in7","ctrlNN.in11","ctrlNN.out0","ctrlNN.out1","ctrlNN.out2","ctrlNN.out3"]
+      # genericLogTopic_log1_Variables: ["ctrlNN.in2","ctrlNN.in15","ctrlNN.in16","ctrlNN.in17","ctrlNN.out0","ctrlNN.out1","ctrlNN.out2","ctrlNN.out3"]
+      # genericLogTopic_log1_Variables: ["ctrlNN.in18","ctrlNN.in19","ctrlNN.in20","ctrlNN.in21"]
+      # genericLogTopic_log1_Variables: ["gyro.x","gyro.y","gyro.z"]
+      # genericLogTopic_log1_Variables: ["ctrlNN.out0","ctrlNN.out1","ctrlNN.out2","ctrlNN.out3", "ctrlNN.usec_eval"]
+      # genericLogTopic_log1_Variables: ["ctrlNN.out0","ctrlNN.out1","ctrlNN.in18","ctrlNN.in19",]
+      # genericLogTopic_log1_Variables: ["ctrlNN.out0","ctrlNN.out1","ctrlNN.hid0","ctrlNN.hid1","ctrlNN.hid2","ctrlNN.hid3","kalman.inFlight"]
+      # genericLogTopic_log1_Variables: ["stateEstimateZ.x","stateEstimateZ.y","stateEstimateZ.z","stateEstimateZ.vx","stateEstimateZ.vy","stateEstimateZ.vz","stateEstimateZ.rateRoll","stateEstimateZ.ratePitch","stateEstimateZ.rateYaw"]
+
       # firmware parameters for all drones (use crazyflieTypes.yaml to set per type, or
       # allCrazyflies.yaml to set per drone)
       firmwareParams:
@@ -18,7 +38,7 @@
           enHighLevel: 1
         stabilizer:
           estimator: 2 # 1: complementary, 2: kalman
-          controller: 2 # 1: PID, 2: mellinger
+          controller: 1 # 1: PID, 2: mellinger 3: INDI 4: NN
         ring:
           effect: 16 # 6: double spinner, 7: solid color, 16: packetRate
           solidBlue: 255 # if set to solid color
@@ -32,30 +52,32 @@
           resetEstimation: 1
       # tracking
       motion_capture_type: "vicon" # one of none,vicon,optitrack,optitrack_closed_source,qualisys,vrpn
-      object_tracking_type: "libobjecttracker" # one of motionCapture,libobjecttracker
+      object_tracking_type: "motionCapture" # one of motionCapture,libobjecttracker, If you
       send_position_only: False # set to False to send position+orientation; set to True to send position only
-      motion_capture_host_name: "vicon"
+      motion_capture_host_name: "192.168.10.190"
       # motion_capture_interface_ip: "" # optional for optitrack with multiple interfaces
       save_point_clouds: "/dev/null" # set to a valid path to log mocap point cloud binary file.
       print_latency: False
       write_csvs: False
       force_no_cache: False
       enable_parameters: True
-      enable_logging: False
-      enable_logging_pose: True
+      enable_logging: True
+      enable_logging_pose: False
     </rosparam>
   </node>
 
-  <node name="joy" pkg="joy" type="joy_node" output="screen">
+  <!-- <node name="joy" pkg="joy" type="joy_node" output="screen">
     <param name="dev" value="$(arg joy_dev)" />
-  </node>
+  </node> -->
 
-  <node pkg="crazyswarm" type="crazyswarm_teleop" name="crazyswarm_teleop" output="screen">
+  <!-- <node pkg="crazyswarm" type="crazyswarm_teleop" name="crazyswarm_teleop" output="screen">
     <param name="csv_file" value="$(find crazyswarm)/launch/figure8_smooth.csv" />
     <param name="timescale" value="0.8" />
-  </node>
+  </node> -->
 
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find crazyswarm)/launch/test.rviz"/>
+  <include file="$(find vicon_bridge)/launch/vicon.launch"/>
+
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find crazyswarm)/launch/test.rviz"/> -->
 
   <!-- <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot_x" args="/cf2/log1/values[0]"/> -->
   <!-- <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot_roll" args="/cf1/log1/values[2] /cf1/log1/values[3]"/> -->
